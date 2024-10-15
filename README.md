@@ -318,5 +318,7 @@ http:// your-public-ip:3000
 
 
 ## Conclusion
+This project demonstrates how to deploy MEAN Stack.
 
+This README serves as documentation to guide through each step and ensure the process is reproducible.
 
