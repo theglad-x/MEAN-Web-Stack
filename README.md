@@ -1,10 +1,10 @@
 # MEAN-Web-Stack
 
 ## MEAN Stack ia a combination of the following components:
--**MongoDB (Document database)** - Stores and allows to retrieve data.
--**Express (Back-end application framework)** - Makes request to Database for Readsand Writes.
--**Angular (Front-end application framework)** - Handles client and server requests.
--**Node.js (JavaScript runtime environment)** - Accepts requests and displays results to end user.
+- **MongoDB (Document database)** - Stores and allows to retrieve data.
+- **Express (Back-end application framework)** - Makes request to Database for Readsand Writes.
+- **Angular (Front-end application framework)** - Handles client and server requests.
+- **Node.js (JavaScript runtime environment)** - Accepts requests and displays results to end user.
 
 ### Prerequisites
 ## Step 0 - Prerequisites
@@ -175,3 +175,148 @@ var Book = mongoose.model('Book', bookSchema);
 module.exports = mongoose.model('Book', bookSchema);
 ```
 ## Step 4 - Access the routes with AngularJs
+Change the directory back to ```Books```
+```sh
+cd ../..
+```
+Create a folder named ```public```
+```sh
+mkdir public && cd public
+```
+Add a file named ```script.js```
+```sh
+vim script.js
+```
+Copy and paste the configuration code into the ```script.js``` file
+```sh
+var app = angular.module('myApp', []);
+app.controller('myCtrl', function($scope, $http) {
+    // Fetch books from the server
+    $http({
+        method: 'GET',
+        url: '/book'
+    }).then(function successCallback(response) {
+        $scope.books = response.data;
+    }, function errorCallback(response) {
+        console.log('Error:' + response);
+    });
+
+    // Delete a book
+    $scope.del_book = function(book) {
+        $http({
+            method: 'DELETE',
+            url: '/book/' + book.isbn // Use book.isbn directly in the URL
+        }).then(function successCallback(response) {
+            console.log(response);
+            // Optionally, refresh the book list or remove the deleted book from $scope.books
+        }, function errorCallback(response) {
+            console.log('Error:' + response);
+        });
+    };
+
+    // Add a new book
+    $scope.add_book = function() {
+        var body = {
+            name: $scope.Name,
+            isbn: $scope.Isbn,
+            author: $scope.Author,
+            pages: $scope.Pages
+        };
+
+        $http({
+            method: 'POST', // Changed to POST for adding a book
+            url: '/book',
+            data: body,
+            headers: {
+                'Content-Type': 'application/json' // Set the content type to JSON
+            }
+        }).then(function successCallback(response) {
+            console.log(response);
+            // Optionally, refresh the book list or add the new book to $scope.books
+        }, function errorCallback(response) {
+            console.log('Error:' + response);
+        });
+    };
+});
+```
+In ```public``` folder, create a file named ```index.html```
+```sh
+vi index.html
+```
+Copy and paste 
+```sh
+<!doctype html>
+<html ng-app="myApp" ng-controller="myCtrl">
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+    <script src="script.js"></script>
+</head>    
+    <body>
+        <div>
+            <table>
+                <tr>
+                    <td>Name:</td>
+                    <td><input type="text" ng-model="Name"></td>
+                </tr>
+                <tr>
+                    <td>Isbn:</td>
+                    <td><input type="text" ng-model="Isbn"></td>
+                </tr>
+                <tr>
+                    <td>Author:</td>
+                    <td><input type="text" ng-model="Author"></td>
+                </tr>
+                <tr>
+                    <td>Pages:</td>
+                    <td><input type="text" ng-model="Pages"></td>
+                </tr>
+            </table>
+            <button ng-click="add_book()">Add</button>
+        </div>
+        <hr>
+        <div>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Isbn</th>
+                    <th>Author</th>
+                    <th>Pages</th>
+                </tr>
+
+                <tr ng-repeat="book in books">
+                    <td>{{book.name}}</td>
+                    <td>{{book.isbn}}</td>
+                    <td>{{book.author}}</td>
+                    <td>{{book.pages}}</td>
+
+                    <td><input type="button" value="Delete" data-ng-click="del_book(book)"></td>
+                </tr>
+            </table>
+        </div>
+    </body>
+</html>
+```
+Change back to ```Books``` directory
+```sh
+cd ..
+```
+Start the server on the terminal by running this command
+```sh
+node server.js
+```
+![locaL](https://github.com/user-attachments/assets/2ed29fb3-7221-4d4f-ac53-697c789eee88)
+
+Accessing the Web appilication on the browser 
+
+The application is running on port 3000, which will be added to the security group. Add inbound rule, open TCP port ```3000``` fron anywhere ```0.0.0.0/0``` 
+
+```sh
+http:// your-public-ip:3000
+```
+![books](https://github.com/user-attachments/assets/5c4eb3ab-d783-45f8-aaab-0f5162bc1e9e)
+
+
+
+## Conclusion
+
+
